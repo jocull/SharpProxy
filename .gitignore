@@ -1,0 +1,4 @@
+
+*.suo
+/LittleProxy/bin
+/LittleProxy/obj
