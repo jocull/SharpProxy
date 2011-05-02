@@ -23,6 +23,10 @@ namespace LittleProxy
             InitializeComponent();
             this.Text += " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
+            string ip = getLocalIP();
+            if(!string.IsNullOrEmpty(ip))
+                lblMyIP.Text = ip;
+
             int port = 5000;
             while (!checkPortAvailability(port))
             {
@@ -84,6 +88,28 @@ namespace LittleProxy
             if (port < MIN_PORT || port > MAX_PORT)
                 return false;
             return true;
+        }
+
+        protected string getLocalIP()
+        {
+            //Try to find our internal IP address...
+            string myHost = System.Net.Dns.GetHostName();
+            IPAddress[] addresses = System.Net.Dns.GetHostEntry(myHost).AddressList;
+            string myIP = "";
+
+            for (int i = 0; i < addresses.Length; i++)
+            {
+                //Is this a valid IPv4 address?
+                if (addresses[i].AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    if (addresses[i].ToString() == "127.0.0.1") //This is not our preference...
+                        continue;
+
+                    myIP = addresses[i].ToString();
+                    break;
+                }
+            }
+            return myIP;
         }
 
         private void toggleButtons()
