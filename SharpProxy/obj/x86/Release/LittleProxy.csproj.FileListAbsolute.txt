@@ -1,0 +1,10 @@
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\bin\Release\LittleProxy.exe.config
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\bin\Release\LittleProxy.exe
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\bin\Release\LittleProxy.pdb
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\obj\x86\Release\LittleProxy.frmMain.resources
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\obj\x86\Release\LittleProxy.Properties.Resources.resources
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\obj\x86\Release\ResGen.read.1.tlog
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\obj\x86\Release\ResGen.write.1.tlog
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\obj\x86\Release\LittleProxy.exe
+C:\Users\jocull\Documents\VS Projects\LittleProxy\LittleProxy\obj\x86\Release\LittleProxy.pdb
