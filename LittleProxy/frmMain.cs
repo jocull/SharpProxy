@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace LittleProxy
+namespace SharpProxy
 {
     public partial class frmMain : Form
     {

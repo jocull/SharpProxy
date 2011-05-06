@@ -1,4 +1,4 @@
-﻿namespace LittleProxy
+﻿namespace SharpProxy
 {
     partial class frmMain
     {
@@ -127,7 +127,7 @@
             this.Controls.Add(this.btnStart);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "frmMain";
-            this.Text = "Little Proxy";
+            this.Text = "SharpProxy";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Shown += new System.EventHandler(this.frmMain_Shown);
             this.ResumeLayout(false);

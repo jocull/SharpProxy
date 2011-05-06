@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LittleProxy", "LittleProxy\LittleProxy.csproj", "{AED54322-48BB-4587-ADE3-45FE2D2318AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpProxy", "LittleProxy\SharpProxy.csproj", "{AED54322-48BB-4587-ADE3-45FE2D2318AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LittleProxy")]
+[assembly: AssemblyTitle("SharpProxy")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("James O'Cull")]
-[assembly: AssemblyProduct("LittleProxy")]
+[assembly: AssemblyProduct("SharpProxy")]
 [assembly: AssemblyCopyright("Copyright © James O'Cull 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

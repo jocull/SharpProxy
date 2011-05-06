@@ -6,7 +6,7 @@ using System.Net;
 using System.Threading;
 using System.IO;
 
-namespace LittleProxy
+namespace SharpProxy
 {
     public class ProxyThread
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace LittleProxy
+namespace SharpProxy
 {
     static class Program
     {
