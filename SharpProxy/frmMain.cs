@@ -96,19 +96,32 @@ namespace SharpProxy
             string myHost = System.Net.Dns.GetHostName();
             IPAddress[] addresses = System.Net.Dns.GetHostEntry(myHost).AddressList;
             string myIP = "";
+            string fallbackIP = "";
 
             for (int i = 0; i < addresses.Length; i++)
             {
                 //Is this a valid IPv4 address?
                 if (addresses[i].AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 {
-                    if (addresses[i].ToString() == "127.0.0.1") //This is not our preference...
+                    string thisAddress = addresses[i].ToString();
+                    //Loopback is not our preference...
+                    if (thisAddress == "127.0.0.1")
                         continue;
-
-                    myIP = addresses[i].ToString();
+                    //169.x.x.x addresses are self-assigned "private network" IP by Windows
+                    if (thisAddress.StartsWith("169"))
+                    {
+                        fallbackIP = thisAddress;
+                        continue;
+                    }
+                    myIP = thisAddress;
                     break;
                 }
             }
+            if (string.IsNullOrEmpty(myIP) && !string.IsNullOrEmpty(fallbackIP))
+            {
+                myIP = fallbackIP;
+            }
+
             return myIP;
         }
 

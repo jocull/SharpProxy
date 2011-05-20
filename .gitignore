@@ -1,4 +1,4 @@
 
 *.suo
-/LittleProxy/bin
-/LittleProxy/obj
+/SharpProxy/bin/*
+/SharpProxy/obj/*
