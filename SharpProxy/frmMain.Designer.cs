@@ -108,6 +108,7 @@
             // cmbIPAddress
             // 
             this.cmbIPAddress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbIPAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbIPAddress.FormattingEnabled = true;
             this.cmbIPAddress.Location = new System.Drawing.Point(11, 25);
             this.cmbIPAddress.Name = "cmbIPAddress";
