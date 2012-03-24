@@ -23,9 +23,16 @@ namespace SharpProxy
             InitializeComponent();
             this.Text += " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-            string ip = getLocalIP();
-            if(!string.IsNullOrEmpty(ip))
-                lblMyIP.Text = ip;
+            List<string> ips = getLocalIPs();
+            if (ips.Count > 0)
+            {
+                cmbIPAddress.Items.Clear();
+                foreach (string ip in ips)
+                {
+                    cmbIPAddress.Items.Add(ip);
+                }
+                cmbIPAddress.Text = cmbIPAddress.Items[0].ToString();
+            }
 
             int port = 5000;
             while (!checkPortAvailability(port))
@@ -90,12 +97,12 @@ namespace SharpProxy
             return true;
         }
 
-        protected string getLocalIP()
+        protected List<string> getLocalIPs()
         {
             //Try to find our internal IP address...
             string myHost = System.Net.Dns.GetHostName();
             IPAddress[] addresses = System.Net.Dns.GetHostEntry(myHost).AddressList;
-            string myIP = "";
+            List<string> myIPs = new List<string>();
             string fallbackIP = "";
 
             for (int i = 0; i < addresses.Length; i++)
@@ -113,16 +120,15 @@ namespace SharpProxy
                         fallbackIP = thisAddress;
                         continue;
                     }
-                    myIP = thisAddress;
-                    break;
+                    myIPs.Add(thisAddress);
                 }
             }
-            if (string.IsNullOrEmpty(myIP) && !string.IsNullOrEmpty(fallbackIP))
+            if (myIPs.Count == 0 && !string.IsNullOrEmpty(fallbackIP))
             {
-                myIP = fallbackIP;
+                myIPs.Add(fallbackIP);
             }
 
-            return myIP;
+            return myIPs;
         }
 
         private void toggleButtons()
@@ -162,6 +168,14 @@ namespace SharpProxy
             }
 
             return true;
+        }
+
+        private void txtPorts_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                btnStart_Click(null, null);
+            }
         }
     }
 }
