@@ -14,10 +14,10 @@ namespace SharpProxy
 {
     public partial class frmMain : Form
     {
-        protected const int MIN_PORT = 1;
-        protected const int MAX_PORT = 65535;
+        private const int MIN_PORT = 1;
+        private const int MAX_PORT = 65535;
 
-        protected ProxyThread ProxyThreadListener = null;
+        private ProxyThread ProxyThreadListener = null;
 
         public frmMain()
         {
@@ -91,14 +91,14 @@ namespace SharpProxy
             MessageBox.Show(msg, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        protected bool checkPortRange(int port)
+        private bool checkPortRange(int port)
         {
             if (port < MIN_PORT || port > MAX_PORT)
                 return false;
             return true;
         }
 
-        protected List<string> getLocalIPs()
+        private List<string> getLocalIPs()
         {
             //Try to find our internal IP address...
             string myHost = System.Net.Dns.GetHostName();

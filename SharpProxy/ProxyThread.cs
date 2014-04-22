@@ -10,18 +10,20 @@ namespace SharpProxy
 {
     public class ProxyThread
     {
-        public int ExternalPort = 0;
-        public int InternalPort = 0;
+        public int ExternalPort { get; set; }
+        public int InternalPort { get; set; }
+        public bool Stopped { get; set; }
 
-        public bool Stopped = false;
-        protected TcpListener Listener = null;
+        private TcpListener Listener { get; set; }
 
-        protected readonly long PROXY_TIMEOUT_TICKS = new TimeSpan(0, 1, 0).Ticks;
+        private readonly long PROXY_TIMEOUT_TICKS = new TimeSpan(0, 1, 0).Ticks;
 
         public ProxyThread(int extPort, int intPort)
         {
             this.ExternalPort = extPort;
             this.InternalPort = intPort;
+            this.Stopped = false;
+            this.Listener = null;
 
             new Thread(new ThreadStart(Listen)).Start();
         }
@@ -55,14 +57,6 @@ namespace SharpProxy
 
         protected void Proxy(object arg)
         {
-            TcpClient client = null;
-            TcpClient host = null;
-
-            BinaryReader clientIn = null;
-            BinaryWriter clientOut = null;
-            BinaryReader hostIn = null;
-            BinaryWriter hostOut = null;
-
             byte[] buffer = new byte[16384];
             int clientRead = -1;
             int hostRead = -1;
@@ -72,67 +66,52 @@ namespace SharpProxy
             try
             {
                 //Setup connections
-                client = (TcpClient)arg;
-                host = new TcpClient();
-                host.Connect(new IPEndPoint(IPAddress.Loopback, this.InternalPort));
-
-                //Setup our streams
-                clientIn = new BinaryReader(client.GetStream());
-                clientOut = new BinaryWriter(client.GetStream());
-                hostIn = new BinaryReader(host.GetStream());
-                hostOut = new BinaryWriter(host.GetStream());
-
-                //Start funneling data!
-                while (clientRead != 0 || hostRead != 0 || (DateTime.Now.Ticks - lastTime) <= PROXY_TIMEOUT_TICKS)
+                using(TcpClient client = (TcpClient)arg)
+                using (TcpClient host = new TcpClient())
                 {
-                    while (client.Connected && (clientRead = client.Available) > 0)
-                    {
-                        clientRead = clientIn.Read(buffer, 0, buffer.Length);
-                        hostOut.Write(buffer, 0, clientRead);
-                        lastTime = DateTime.Now.Ticks;
-                        hostOut.Flush();
-                    }
-                    while (host.Connected && (hostRead = host.Available) > 0)
-                    {
-                        hostRead = hostIn.Read(buffer, 0, buffer.Length);
-                        clientOut.Write(buffer, 0, hostRead);
-                        lastTime = DateTime.Now.Ticks;
-                        clientOut.Flush();
-                    }
+                    host.Connect(new IPEndPoint(IPAddress.Loopback, this.InternalPort));
 
-                    //Sleepy time?
-                    if (this.Stopped)
-                        return;
-                    if (clientRead == 0 && hostRead == 0)
+                    //Setup our streams
+                    using (BinaryReader clientIn = new BinaryReader(client.GetStream()))
+                    using (BinaryWriter clientOut = new BinaryWriter(client.GetStream()))
+                    using (BinaryReader hostIn = new BinaryReader(host.GetStream()))
+                    using (BinaryWriter hostOut = new BinaryWriter(host.GetStream()))
                     {
-                        Thread.Sleep(100);
+                        //Start funneling data!
+                        while (clientRead != 0 || hostRead != 0 || (DateTime.Now.Ticks - lastTime) <= PROXY_TIMEOUT_TICKS)
+                        {
+                            while (client.Connected && (clientRead = client.Available) > 0)
+                            {
+                                clientRead = clientIn.Read(buffer, 0, buffer.Length);
+                                hostOut.Write(buffer, 0, clientRead);
+                                lastTime = DateTime.Now.Ticks;
+                                hostOut.Flush();
+                            }
+                            while (host.Connected && (hostRead = host.Available) > 0)
+                            {
+                                hostRead = hostIn.Read(buffer, 0, buffer.Length);
+                                clientOut.Write(buffer, 0, hostRead);
+                                lastTime = DateTime.Now.Ticks;
+                                clientOut.Flush();
+                            }
+
+                            //Sleepy time?
+                            if (this.Stopped)
+                                return;
+                            if (clientRead == 0 && hostRead == 0)
+                            {
+                                Thread.Sleep(100);
+                            }
+                        }
+
+                        long waitTime = DateTime.Now.Ticks - lastTime;
                     }
                 }
-
-                long waitTime = DateTime.Now.Ticks - lastTime;
             }
             catch (Exception ex)
             {
                 //TODO: Remove this. Only here to catch breakpoints.
                 bool failed = true;
-            }
-            finally
-            {
-                try { client.Close(); }
-                catch { }
-                try { host.Close(); }
-                catch { }
-
-                //TODO: Do I need all of these close statements?
-
-                //try { clientOut.Close(); }
-                //catch { }
-                //try { clientIn.Close(); }
-                //catch { }
-                //try { hostOut.Close(); }
-                //catch { }
-                //try { hostIn.Close(); }
-                //catch { }
             }
         }
     }
