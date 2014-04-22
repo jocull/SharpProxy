@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Linq;
 
 namespace SharpProxy
 {
@@ -23,8 +24,8 @@ namespace SharpProxy
             InitializeComponent();
             this.Text += " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-            List<string> ips = getLocalIPs();
-            if (ips.Count > 0)
+            var ips = getLocalIPs().OrderBy(x => x);
+            if (ips.Any())
             {
                 cmbIPAddress.Items.Clear();
                 foreach (string ip in ips)
