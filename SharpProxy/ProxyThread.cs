@@ -39,7 +39,10 @@ namespace SharpProxy
         public void Stop()
         {
             Stopped = true;
-            Listener.Stop();
+            if (Listener != null)
+            {
+                Listener.Stop();
+            }
         }
 
         protected void Listen()
