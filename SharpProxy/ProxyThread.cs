@@ -5,6 +5,8 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.IO;
+using System.Linq;
+using System.Diagnostics;
 
 namespace SharpProxy
 {
@@ -17,6 +19,12 @@ namespace SharpProxy
         private TcpListener Listener { get; set; }
 
         private readonly long PROXY_TIMEOUT_TICKS = new TimeSpan(0, 1, 0).Ticks;
+        
+        private const string HTTP_SEPARATOR = "\r\n";
+        private const string HTTP_HEADER_BREAK = HTTP_SEPARATOR + HTTP_SEPARATOR;
+        
+        private readonly string[] HTTP_SEPARATORS = new string[] { HTTP_SEPARATOR };
+        private readonly string[] HTTP_HEADER_BREAKS = new string[] { HTTP_HEADER_BREAK };
 
         public ProxyThread(int extPort, int intPort)
         {
@@ -66,7 +74,7 @@ namespace SharpProxy
             try
             {
                 //Setup connections
-                using(TcpClient client = (TcpClient)arg)
+                using (TcpClient client = (TcpClient)arg)
                 using (TcpClient host = new TcpClient())
                 {
                     host.Connect(new IPEndPoint(IPAddress.Loopback, this.InternalPort));
@@ -83,6 +91,35 @@ namespace SharpProxy
                             while (client.Connected && (clientRead = client.Available) > 0)
                             {
                                 clientRead = clientIn.Read(buffer, 0, buffer.Length);
+
+                                //Rewrite the host header?
+                                if (clientRead > 0)
+                                {
+                                    string str = Encoding.UTF8.GetString(buffer, 0, clientRead);
+
+                                    int startIdx = str.IndexOf(HTTP_SEPARATOR + "Host:");
+                                    if (startIdx >= 0)
+                                    {
+                                        int endIdx = str.IndexOf(HTTP_SEPARATOR, startIdx + 1, str.Length - (startIdx + 1));
+                                        if (endIdx > 0)
+                                        {
+                                            string replace = str.Substring(startIdx, endIdx - startIdx);
+                                            string replaceWith = HTTP_SEPARATOR + "Host: localhost:" + InternalPort;
+
+                                            Trace.WriteLine("Incoming HTTP header:\n\n" + str);
+
+                                            str = str.Replace(replace, replaceWith);
+
+                                            Trace.WriteLine("Rewritten HTTP header:\n\n" + str);
+                                            
+                                            byte[] strBytes = Encoding.UTF8.GetBytes(str);
+                                            Array.Clear(buffer, 0, buffer.Length);
+                                            Array.Copy(strBytes, buffer, strBytes.Length);
+                                            clientRead = strBytes.Length;
+                                        }
+                                    }
+                                }
+
                                 hostOut.Write(buffer, 0, clientRead);
                                 lastTime = DateTime.Now.Ticks;
                                 hostOut.Flush();
