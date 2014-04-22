@@ -14,6 +14,7 @@ namespace SharpProxy
     {
         public int ExternalPort { get; set; }
         public int InternalPort { get; set; }
+        public bool RewriteHostHeaders { get; set; }
         public bool Stopped { get; set; }
 
         private TcpListener Listener { get; set; }
@@ -26,10 +27,11 @@ namespace SharpProxy
         private readonly string[] HTTP_SEPARATORS = new string[] { HTTP_SEPARATOR };
         private readonly string[] HTTP_HEADER_BREAKS = new string[] { HTTP_HEADER_BREAK };
 
-        public ProxyThread(int extPort, int intPort)
+        public ProxyThread(int extPort, int intPort, bool rewriteHostHeaders)
         {
             this.ExternalPort = extPort;
             this.InternalPort = intPort;
+            this.RewriteHostHeaders = rewriteHostHeaders;
             this.Stopped = false;
             this.Listener = null;
 
@@ -96,7 +98,7 @@ namespace SharpProxy
                                 clientRead = clientIn.Read(buffer, 0, buffer.Length);
 
                                 //Rewrite the host header?
-                                if (clientRead > 0)
+                                if (this.RewriteHostHeaders && clientRead > 0)
                                 {
                                     string str = Encoding.UTF8.GetString(buffer, 0, clientRead);
 

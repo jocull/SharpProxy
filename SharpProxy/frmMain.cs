@@ -110,7 +110,7 @@ namespace SharpProxy
                 return;
             }
 
-            ProxyThreadListener = new ProxyThread(externalPort, internalPort);
+            ProxyThreadListener = new ProxyThread(externalPort, internalPort, chkRewriteHostHeaders.Checked);
 
             toggleButtons();
         }
@@ -174,6 +174,7 @@ namespace SharpProxy
             btnStart.Enabled = !btnStart.Enabled;
             txtExternalPort.Enabled = !txtExternalPort.Enabled;
             txtInternalPort.Enabled = !txtInternalPort.Enabled;
+            chkRewriteHostHeaders.Enabled = !chkRewriteHostHeaders.Enabled;
         }
 
         private bool checkPortAvailability(int port)
