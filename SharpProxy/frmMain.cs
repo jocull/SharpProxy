@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Linq;
+using System.IO;
 
 namespace SharpProxy
 {
@@ -16,6 +17,9 @@ namespace SharpProxy
     {
         private const int MIN_PORT = 1;
         private const int MAX_PORT = 65535;
+
+        public static readonly string CommonDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SharpProxy");
+        public static readonly string ConfigInfoPath = Path.Combine(CommonDataPath, "config.txt");
 
         private ProxyThread ProxyThreadListener = null;
 
@@ -46,12 +50,44 @@ namespace SharpProxy
         private void frmMain_Shown(object sender, EventArgs e)
         {
             txtInternalPort.Focus();
+
+            //Try to load config
+            try
+            {
+                using (StreamReader sr = new StreamReader(ConfigInfoPath))
+                {
+                    var values = sr.ReadToEnd().Split('\n')
+                                               .Select(x => x.Trim())
+                                               .ToArray();
+
+                    txtInternalPort.Text = values[0];
+                    chkRewriteHostHeaders.Checked = bool.Parse(values[1]);
+                }
+            }
+            catch { }
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (ProxyThreadListener != null)
+            {
                 ProxyThreadListener.Stop();
+            }
+
+            //Try to save config
+            try
+            {
+                if (!Directory.Exists(CommonDataPath))
+                {
+                    Directory.CreateDirectory(CommonDataPath);
+                }
+                using (StreamWriter sw = new StreamWriter(ConfigInfoPath))
+                {
+                    sw.WriteLine(txtInternalPort.Text);
+                    sw.WriteLine(chkRewriteHostHeaders.Checked);
+                }
+            }
+            catch { }
         }
 
         private void btnStart_Click(object sender, EventArgs e)

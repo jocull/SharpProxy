@@ -37,11 +37,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.cmbIPAddress = new System.Windows.Forms.ComboBox();
+            this.chkRewriteHostHeaders = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(11, 130);
+            this.btnStart.Location = new System.Drawing.Point(11, 154);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 23);
             this.btnStart.TabIndex = 0;
@@ -52,7 +53,7 @@
             // btnStop
             // 
             this.btnStop.Enabled = false;
-            this.btnStop.Location = new System.Drawing.Point(92, 130);
+            this.btnStop.Location = new System.Drawing.Point(125, 154);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 23);
             this.btnStop.TabIndex = 1;
@@ -74,7 +75,7 @@
             this.txtExternalPort.Location = new System.Drawing.Point(11, 65);
             this.txtExternalPort.MaxLength = 7;
             this.txtExternalPort.Name = "txtExternalPort";
-            this.txtExternalPort.Size = new System.Drawing.Size(156, 20);
+            this.txtExternalPort.Size = new System.Drawing.Size(189, 20);
             this.txtExternalPort.TabIndex = 3;
             this.txtExternalPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorts_KeyPress);
             // 
@@ -83,7 +84,7 @@
             this.txtInternalPort.Location = new System.Drawing.Point(11, 104);
             this.txtInternalPort.MaxLength = 7;
             this.txtInternalPort.Name = "txtInternalPort";
-            this.txtInternalPort.Size = new System.Drawing.Size(156, 20);
+            this.txtInternalPort.Size = new System.Drawing.Size(189, 20);
             this.txtInternalPort.TabIndex = 5;
             this.txtInternalPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPorts_KeyPress);
             // 
@@ -112,14 +113,27 @@
             this.cmbIPAddress.FormattingEnabled = true;
             this.cmbIPAddress.Location = new System.Drawing.Point(11, 25);
             this.cmbIPAddress.Name = "cmbIPAddress";
-            this.cmbIPAddress.Size = new System.Drawing.Size(156, 21);
+            this.cmbIPAddress.Size = new System.Drawing.Size(189, 21);
             this.cmbIPAddress.TabIndex = 8;
+            // 
+            // chkRewriteHostHeaders
+            // 
+            this.chkRewriteHostHeaders.AutoSize = true;
+            this.chkRewriteHostHeaders.Checked = true;
+            this.chkRewriteHostHeaders.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRewriteHostHeaders.Location = new System.Drawing.Point(13, 131);
+            this.chkRewriteHostHeaders.Name = "chkRewriteHostHeaders";
+            this.chkRewriteHostHeaders.Size = new System.Drawing.Size(188, 17);
+            this.chkRewriteHostHeaders.TabIndex = 9;
+            this.chkRewriteHostHeaders.Text = "&Rewrite host headers (IIS Express)";
+            this.chkRewriteHostHeaders.UseVisualStyleBackColor = true;
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(179, 160);
+            this.ClientSize = new System.Drawing.Size(212, 185);
+            this.Controls.Add(this.chkRewriteHostHeaders);
             this.Controls.Add(this.cmbIPAddress);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtInternalPort);
@@ -150,6 +164,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cmbIPAddress;
+        private System.Windows.Forms.CheckBox chkRewriteHostHeaders;
     }
 }
 
