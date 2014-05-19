@@ -1,6 +1,6 @@
 ﻿namespace SharpProxy
 {
-    partial class frmMain
+    partial class FrmMain
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -38,11 +38,12 @@
             this.label3 = new System.Windows.Forms.Label();
             this.cmbIPAddress = new System.Windows.Forms.ComboBox();
             this.chkRewriteHostHeaders = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(11, 154);
+            this.btnStart.Location = new System.Drawing.Point(11, 192);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(75, 23);
             this.btnStart.TabIndex = 0;
@@ -53,7 +54,7 @@
             // btnStop
             // 
             this.btnStop.Enabled = false;
-            this.btnStop.Location = new System.Drawing.Point(125, 154);
+            this.btnStop.Location = new System.Drawing.Point(125, 192);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 23);
             this.btnStop.TabIndex = 1;
@@ -128,11 +129,20 @@
             this.chkRewriteHostHeaders.Text = "&Rewrite host headers (IIS Express)";
             this.chkRewriteHostHeaders.UseVisualStyleBackColor = true;
             // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(12, 152);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(188, 30);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Note: remember to use your IP and external port on the others devices";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(212, 185);
+            this.ClientSize = new System.Drawing.Size(212, 224);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.chkRewriteHostHeaders);
             this.Controls.Add(this.cmbIPAddress);
             this.Controls.Add(this.label3);
@@ -145,7 +155,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.Name = "frmMain";
+            this.Name = "FrmMain";
             this.Text = "SharpProxy";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Shown += new System.EventHandler(this.frmMain_Shown);
@@ -165,6 +175,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cmbIPAddress;
         private System.Windows.Forms.CheckBox chkRewriteHostHeaders;
+        private System.Windows.Forms.Label label4;
     }
 }
 
