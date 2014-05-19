@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Globalization;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -13,20 +10,20 @@ using System.IO;
 
 namespace SharpProxy
 {
-    public partial class frmMain : Form
+    public partial class FrmMain : Form
     {
-        private const int MIN_PORT = 1;
-        private const int MAX_PORT = 65535;
+        private const int MinPort = 1;
+        private const int MaxPort = 65535;
 
         public static readonly string CommonDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SharpProxy");
         public static readonly string ConfigInfoPath = Path.Combine(CommonDataPath, "config.txt");
 
-        private ProxyThread ProxyThreadListener = null;
+        private ProxyThread _proxyThreadListener;
 
-        public frmMain()
+        public FrmMain()
         {
             InitializeComponent();
-            this.Text += " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Text += @" " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
             var ips = getLocalIPs().OrderBy(x => x);
             if (ips.Any())
@@ -39,12 +36,18 @@ namespace SharpProxy
                 cmbIPAddress.Text = cmbIPAddress.Items[0].ToString();
             }
 
-            int port = 5000;
+            var port = 5000;
             while (!checkPortAvailability(port))
             {
                 port++;
             }
-            txtExternalPort.Text = port.ToString();
+            txtExternalPort.Text = port.ToString(CultureInfo.InvariantCulture);
+        }
+
+        public override sealed string Text
+        {
+            get { return base.Text; }
+            set { base.Text = value; }
         }
 
         private void frmMain_Shown(object sender, EventArgs e)
@@ -54,7 +57,7 @@ namespace SharpProxy
             //Try to load config
             try
             {
-                using (StreamReader sr = new StreamReader(ConfigInfoPath))
+                using (var sr = new StreamReader(ConfigInfoPath))
                 {
                     var values = sr.ReadToEnd().Split('\n')
                                                .Select(x => x.Trim())
@@ -64,14 +67,15 @@ namespace SharpProxy
                     chkRewriteHostHeaders.Checked = bool.Parse(values[1]);
                 }
             }
-            catch { }
+            catch (Exception)
+            { }
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (ProxyThreadListener != null)
+            if (_proxyThreadListener != null)
             {
-                ProxyThreadListener.Stop();
+                _proxyThreadListener.Stop();
             }
 
             //Try to save config
@@ -81,94 +85,85 @@ namespace SharpProxy
                 {
                     Directory.CreateDirectory(CommonDataPath);
                 }
-                using (StreamWriter sw = new StreamWriter(ConfigInfoPath))
+                using (var sw = new StreamWriter(ConfigInfoPath))
                 {
                     sw.WriteLine(txtInternalPort.Text);
                     sw.WriteLine(chkRewriteHostHeaders.Checked);
                 }
             }
-            catch { }
+            catch (Exception)
+            { }
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            int externalPort = 0;
-            int internalPort = 0;
+            int externalPort;
+            int internalPort;
             //Validation
             int.TryParse(txtExternalPort.Text, out externalPort);
             int.TryParse(txtInternalPort.Text, out internalPort);
-            if (!checkPortRange(externalPort)
-                || !checkPortRange(internalPort)
+            if (!CheckPortRange(externalPort)
+                || !CheckPortRange(internalPort)
                 || externalPort == internalPort)
             {
-                showError("Ports must be between " + MIN_PORT + "-" + MAX_PORT + " and must not be the same.");
+                ShowError("Ports must be between " + MinPort + "-" + MaxPort + " and must not be the same.");
                 return;
             }
             if (!checkPortAvailability(externalPort))
             {
-                showError("Port " + externalPort + " is not available, please select a different port.");
+                ShowError("Port " + externalPort + " is not available, please select a different port.");
                 return;
             }
 
-            ProxyThreadListener = new ProxyThread(externalPort, internalPort, chkRewriteHostHeaders.Checked);
+            _proxyThreadListener = new ProxyThread(externalPort, internalPort, chkRewriteHostHeaders.Checked);
 
-            toggleButtons();
+            ToggleButtons();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            ProxyThreadListener.Stop();
+            _proxyThreadListener.Stop();
 
-            toggleButtons();
+            ToggleButtons();
         }
 
-        private void showError(string msg)
+        private static void ShowError(string msg)
         {
-            MessageBox.Show(msg, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(msg, @"Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private bool checkPortRange(int port)
+        private static bool CheckPortRange(int port)
         {
-            if (port < MIN_PORT || port > MAX_PORT)
-                return false;
-            return true;
+            return port >= MinPort && port <= MaxPort;
         }
 
-        private List<string> getLocalIPs()
+        private IEnumerable<string> getLocalIPs()
         {
             //Try to find our internal IP address...
-            string myHost = System.Net.Dns.GetHostName();
-            IPAddress[] addresses = System.Net.Dns.GetHostEntry(myHost).AddressList;
-            List<string> myIPs = new List<string>();
-            string fallbackIP = "";
+            var myHost = Dns.GetHostName();
+            var addresses = Dns.GetHostEntry(myHost).AddressList;
+            var myIPs = new List<string>();
+            var fallbackIp = "";
 
-            for (int i = 0; i < addresses.Length; i++)
+            foreach (string thisAddress in addresses.Where(address => address.AddressFamily == AddressFamily.InterNetwork).Select(address => address.ToString()).Where(thisAddress => thisAddress != "127.0.0.1"))
             {
-                //Is this a valid IPv4 address?
-                if (addresses[i].AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                //169.x.x.x addresses are self-assigned "private network" IP by Windows
+                if (thisAddress.StartsWith("169"))
                 {
-                    string thisAddress = addresses[i].ToString();
-                    //Loopback is not our preference...
-                    if (thisAddress == "127.0.0.1")
-                        continue;
-                    //169.x.x.x addresses are self-assigned "private network" IP by Windows
-                    if (thisAddress.StartsWith("169"))
-                    {
-                        fallbackIP = thisAddress;
-                        continue;
-                    }
-                    myIPs.Add(thisAddress);
+                    fallbackIp = thisAddress;
+                    continue;
                 }
+                myIPs.Add(thisAddress);
             }
-            if (myIPs.Count == 0 && !string.IsNullOrEmpty(fallbackIP))
+            if (myIPs.Count == 0 && !string.IsNullOrEmpty(fallbackIp))
             {
-                myIPs.Add(fallbackIP);
+                myIPs.Add(fallbackIp);
             }
 
             return myIPs;
         }
 
-        private void toggleButtons()
+        private void ToggleButtons()
         {
             btnStop.Enabled = !btnStop.Enabled;
             btnStart.Enabled = !btnStart.Enabled;
@@ -185,18 +180,17 @@ namespace SharpProxy
             // by the netstat command line application, just in .Net strongly-typed object
             // form.  We will look through the list, and if our port we would like to use
             // in our TcpClient is occupied, we will set isAvailable to false.
-            IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
-            TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
+            var ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+            var tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
 
-            foreach (TcpConnectionInformation tcpi in tcpConnInfoArray)
+            if (tcpConnInfoArray.Any(tcpi => tcpi.LocalEndPoint.Port == port))
             {
-                if (tcpi.LocalEndPoint.Port == port)
-                    return false;
+                return false;
             }
 
             try
             {
-                TcpListener listener = new TcpListener(new IPEndPoint(IPAddress.Any, port));
+                var listener = new TcpListener(new IPEndPoint(IPAddress.Any, port));
                 listener.Start();
                 listener.Stop();
             }
