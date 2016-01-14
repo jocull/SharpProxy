@@ -38,6 +38,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.cmbIPAddress = new System.Windows.Forms.ComboBox();
             this.chkRewriteHostHeaders = new System.Windows.Forms.CheckBox();
+            this.picQRCode = new System.Windows.Forms.PictureBox();
+            this.label4 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.picQRCode)).BeginInit();
             this.SuspendLayout();
             // 
             // btnStart
@@ -115,6 +118,7 @@
             this.cmbIPAddress.Name = "cmbIPAddress";
             this.cmbIPAddress.Size = new System.Drawing.Size(189, 21);
             this.cmbIPAddress.TabIndex = 8;
+            this.cmbIPAddress.SelectedIndexChanged += new System.EventHandler(this.cmbIPAddress_SelectedIndexChanged);
             // 
             // chkRewriteHostHeaders
             // 
@@ -128,11 +132,32 @@
             this.chkRewriteHostHeaders.Text = "&Rewrite host headers (IIS Express)";
             this.chkRewriteHostHeaders.UseVisualStyleBackColor = true;
             // 
+            // picQRCode
+            // 
+            this.picQRCode.BackColor = System.Drawing.Color.White;
+            this.picQRCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picQRCode.Location = new System.Drawing.Point(216, 25);
+            this.picQRCode.Name = "picQRCode";
+            this.picQRCode.Size = new System.Drawing.Size(131, 131);
+            this.picQRCode.TabIndex = 10;
+            this.picQRCode.TabStop = false;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(219, 9);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(51, 13);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "QR Code";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(212, 185);
+            this.ClientSize = new System.Drawing.Size(375, 192);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.picQRCode);
             this.Controls.Add(this.chkRewriteHostHeaders);
             this.Controls.Add(this.cmbIPAddress);
             this.Controls.Add(this.label3);
@@ -149,6 +174,7 @@
             this.Text = "SharpProxy";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Shown += new System.EventHandler(this.frmMain_Shown);
+            ((System.ComponentModel.ISupportInitialize)(this.picQRCode)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -165,6 +191,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cmbIPAddress;
         private System.Windows.Forms.CheckBox chkRewriteHostHeaders;
+        private System.Windows.Forms.PictureBox picQRCode;
+        private System.Windows.Forms.Label label4;
     }
 }
 

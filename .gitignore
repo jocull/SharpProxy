@@ -19,7 +19,10 @@ Thumbs.db
 *.cache
 *.ilk
 *.log
-[Bb]in
+Bin/*
+!Bin/QRCoder.dll
+bin/*
+!bin/QRCoder.dll
 [Dd]ebug*/
 *.lib
 *.sbr

@@ -10,6 +10,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Linq;
 using System.IO;
+using QRCoder;
 
 namespace SharpProxy
 {
@@ -17,6 +18,9 @@ namespace SharpProxy
     {
         private const int MIN_PORT = 1;
         private const int MAX_PORT = 65535;
+        private const int PIXELS_PER_MODULE = 4;
+
+        private QRCodeGenerator qrCodeGenerator = new QRCodeGenerator();
 
         public static readonly string CommonDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SharpProxy");
         public static readonly string ConfigInfoPath = Path.Combine(CommonDataPath, "config.txt");
@@ -113,6 +117,7 @@ namespace SharpProxy
             ProxyThreadListener = new ProxyThread(externalPort, internalPort, chkRewriteHostHeaders.Checked);
 
             toggleButtons();
+            showQRCode();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -120,6 +125,7 @@ namespace SharpProxy
             ProxyThreadListener.Stop();
 
             toggleButtons();
+            picQRCode.Image = null;
         }
 
         private void showError(string msg)
@@ -214,6 +220,21 @@ namespace SharpProxy
             {
                 btnStart_Click(null, null);
             }
+        }
+
+        private void showQRCode ()
+        {
+            string data = String.Format("http://{0}:{1}", cmbIPAddress.Text, txtExternalPort.Text);
+            
+            QRCode qrCode = new QRCode(qrCodeGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.M));
+
+            picQRCode.Image = qrCode.GetGraphic(PIXELS_PER_MODULE);
+        }
+
+        private void cmbIPAddress_SelectedIndexChanged (object sender, EventArgs e)
+        {
+            if (btnStop.Enabled)
+                showQRCode();
         }
     }
 }
