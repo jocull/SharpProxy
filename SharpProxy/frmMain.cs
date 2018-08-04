@@ -215,5 +215,11 @@ namespace SharpProxy
                 btnStart_Click(null, null);
             }
         }
+
+        private void lnkLblCopy_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var selectedIPAddress = cmbIPAddress.SelectedItem.ToString();
+            Clipboard.SetText(selectedIPAddress);
+        }
     }
 }
